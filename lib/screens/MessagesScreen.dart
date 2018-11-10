@@ -10,6 +10,7 @@ class MessagesScreen extends StatefulWidget {
 
 class _MessagesScreenState extends State<MessagesScreen> {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = new GlobalKey<RefreshIndicatorState>();
+  final TextEditingController _textController = new TextEditingController();
   MessageController _messageController;
   var messages = [];
   bool isLoading;
@@ -55,6 +56,50 @@ class _MessagesScreenState extends State<MessagesScreen> {
     return setup();
   }
 
+  Future _handleSubmitted(String message) async {
+    _textController.clear();
+    final response = await _messageController.postMessage(message);
+
+    print(response);
+
+    if(response['message'] != null) {
+      this.setState(() {
+        this._refreshIndicatorKey.currentState.show();
+      });
+    }
+  }
+
+  Widget _textComposerWidget() {
+    return new IconTheme(
+      data: new IconThemeData(color: Colors.blue),
+      child: new Container(
+        margin: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: new Row(
+          children: <Widget>[
+            new Flexible(
+              child: new TextField(
+                decoration: new InputDecoration.collapsed(hintText: "Send a message"),
+                controller: _textController,
+                onSubmitted: _handleSubmitted,
+              ),
+            ),
+            new Container(
+              decoration: new BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.all(Radius.circular(30.0))
+              ),
+              margin: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 4.0),
+              child: new IconButton(
+                icon: new Icon(Icons.send),
+                onPressed: () => _handleSubmitted(_textController.text),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height / 2;
@@ -66,21 +111,22 @@ class _MessagesScreenState extends State<MessagesScreen> {
       return Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          new Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: new Container(
-              height: height,
-              color: Theme.of(context).backgroundColor,
-              child: RefreshIndicator(
-                key: _refreshIndicatorKey,
-                onRefresh: _refresh,
-                child: (isLoading) ? _refreshIndicatorKey.currentState.show() : 
-                new ListView(
-                  children: renderMessages(),
-                ),
+          new Flexible(
+            child: RefreshIndicator(
+              key: _refreshIndicatorKey,
+              onRefresh: _refresh,
+              child: (isLoading) ? _refreshIndicatorKey.currentState.show() : 
+              new ListView(
+                children: renderMessages(),
               ),
             ),
           ),
+          new Divider(
+            height: 1.0,
+          ),
+          new Container(
+            child: _textComposerWidget(),
+          )
         ]
       );
     }

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:chat_app/controller/Controller.dart';
 import 'package:chat_app/controller/LoginController.dart';
 
@@ -24,6 +25,40 @@ class MessageController extends Controller {
 
     if(response.statusCode == 401) {
       return 'not-authorized';
+    }
+  }
+
+  Future postMessage(String message) async {
+    sharedPref = await SharedPreferences.getInstance();
+
+    final sessionId = await _loginController.getLocalToken();
+    final userName = sharedPref.getString('username');
+
+    print(userName);
+
+    try {
+      final response = await http.post("$baseUrl/messages", 
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'JWT $sessionId'
+        },
+        body: json.encode({
+          'user': userName,
+          'message': message
+        })
+      );
+
+      if(response.statusCode == 200) {
+        final parsedJson = json.decode(response.body);
+        return parsedJson;
+      }
+
+      if(response.statusCode == 401) {
+        return 401;
+      }
+
+    } catch(err) {
+      print(err);
     }
   }
 
