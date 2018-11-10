@@ -50,6 +50,7 @@ class LoginController extends Controller {
   Future removeLocalToken() async {
     sharedPref = await SharedPreferences.getInstance();
 
+    sharedPref.remove('username');
     sharedPref.remove('token');
   }
 }
