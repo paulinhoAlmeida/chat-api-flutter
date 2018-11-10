@@ -2,11 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:chat_app/controller/Controller.dart';
 
-class LoginController {
-
-  final String baseUrl = "https://chat-api-stijn.herokuapp.com/api";
-  SharedPreferences sharedPref;
+class LoginController extends Controller {
 
   Future login(username, password) async {
 
@@ -47,5 +45,11 @@ class LoginController {
     sharedPref = await SharedPreferences.getInstance();
 
     return sharedPref.getString('token');
+  }
+
+  Future removeLocalToken() async {
+    sharedPref = await SharedPreferences.getInstance();
+
+    sharedPref.remove('token');
   }
 }

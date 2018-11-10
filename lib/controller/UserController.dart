@@ -2,11 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:chat_app/controller/Controller.dart';
 
-class UserController {
-  final String baseUrl = "https://chat-api-stijn.herokuapp.com/api";
-  SharedPreferences sharedPref;
-
+class UserController extends Controller {
+  
   Future getUser() async {
     final token = await getLocalToken();
 

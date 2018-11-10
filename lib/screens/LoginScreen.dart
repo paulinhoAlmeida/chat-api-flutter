@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-import '../controller/LoginController.dart';
+import 'package:chat_app/controller/LoginController.dart';
 
-import './HomeScreen.dart';
+import 'package:chat_app/screens/HomeScreen.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -20,7 +20,25 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    _isLoading = false;
+    _isLoading = true;
+    setup();
+  }
+
+  setup() async {
+    var localToken = await _controller.getLocalToken();
+    await new Future.delayed(new Duration(seconds: 1));
+    if(localToken == null) {
+      this.setState(() {
+        _isLoading = false;
+      });
+    } else {
+      Navigator.pushAndRemoveUntil(context, 
+          MaterialPageRoute(
+            builder: (context) => new HomeScreen()
+          ),
+          ModalRoute.withName('/home')
+        );
+    }
   }
 
   Future login(String username, String password) async {
@@ -107,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                           decoration: new InputDecoration(
                             icon: new Icon(Icons.person),
-                            hintText: 'Username'
+                            labelText: 'Username',
                           ),
                         ),
                         new TextFormField(
@@ -115,12 +133,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           obscureText: true,
                           validator: (value) {
                             if (value.isEmpty) {
-                              return 'Please enter your email';
+                              return 'Please enter your password';
                             }
                           },
                           decoration: new InputDecoration(
                             icon: new Icon(Icons.lock),
-                            hintText: 'Password'
+                            labelText: 'Password',
                           ),
                         ),
                         new Padding(
