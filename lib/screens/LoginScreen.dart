@@ -101,15 +101,13 @@ class _LoginScreenState extends State<LoginScreen> {
         children: <Widget>[
           new Padding(
             padding: const EdgeInsets.all(16.0),
-            child: new Card(
-              child: (_isLoading) ? 
-              new Center(
+            child: (_isLoading) ? new Center(
                 child: new Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: new CircularProgressIndicator()
                 ),
-              ) :
-              new Padding(
+              ) : new Card(
+              child: new Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: new Form(
                     key: _formKey,
