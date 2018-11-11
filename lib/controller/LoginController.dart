@@ -6,9 +6,16 @@ import 'package:chat_app/controller/Controller.dart';
 
 class LoginController extends Controller {
 
-  Future login(username, password) async {
+  LoginController() {
+    this.setup();
+  }
 
+  @override
+  void setup() async {
     sharedPref = await SharedPreferences.getInstance();
+  }
+
+  Future login(username, password) async {
 
     try {
       final response = await http.post("$baseUrl/auth", 
@@ -43,13 +50,12 @@ class LoginController extends Controller {
 
   Future getLocalToken() async {
     sharedPref = await SharedPreferences.getInstance();
-
     return sharedPref.getString('token');
   }
 
   Future removeLocalToken() async {
     sharedPref = await SharedPreferences.getInstance();
-
+    
     sharedPref.remove('username');
     sharedPref.remove('token');
   }

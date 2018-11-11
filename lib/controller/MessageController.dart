@@ -8,6 +8,15 @@ import 'package:chat_app/controller/LoginController.dart';
 class MessageController extends Controller {
   LoginController _loginController = new LoginController();
 
+  MessageController() {
+    this.setup();
+  }
+
+  @override
+  void setup() async {
+    sharedPref = await SharedPreferences.getInstance();
+  }
+
   Future getAllMessages() async {
     final sessionId = await _loginController.getLocalToken();
     final response = await http.get("$baseUrl/messages",
@@ -29,8 +38,6 @@ class MessageController extends Controller {
   }
 
   Future postMessage(String message) async {
-    sharedPref = await SharedPreferences.getInstance();
-
     final sessionId = await _loginController.getLocalToken();
     final userName = sharedPref.getString('username');
 

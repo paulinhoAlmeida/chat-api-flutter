@@ -5,6 +5,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:chat_app/controller/Controller.dart';
 
 class UserController extends Controller {
+
+  UserController() {
+    this.setup();
+  }
+
+  @override
+  setup() async {
+    sharedPref = await SharedPreferences.getInstance();
+  }
   
   Future getUser() async {
     final token = await getLocalToken();
@@ -31,13 +40,11 @@ class UserController extends Controller {
   }
 
   Future removeSession() async {
-    sharedPref = await SharedPreferences.getInstance();
 
     sharedPref.remove('token');
   }
 
   Future getLocalToken() async {
-    sharedPref = await SharedPreferences.getInstance();
 
     return sharedPref.getString('token');
   }
