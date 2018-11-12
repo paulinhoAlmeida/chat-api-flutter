@@ -102,7 +102,6 @@ class _MessagesScreenState extends State<MessagesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height / 2;
     if(isLoading) {
       return new Center(
         child: new CircularProgressIndicator()
