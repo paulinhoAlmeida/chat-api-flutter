@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
+import 'package:chat_app/controller/LoginController.dart';
 import 'package:chat_app/controller/MessageController.dart';
+import 'package:chat_app/screens/LoginScreen.dart';
 
 class MessagesScreen extends StatefulWidget {
   @override
@@ -12,19 +14,48 @@ class _MessagesScreenState extends State<MessagesScreen> {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = new GlobalKey<RefreshIndicatorState>();
   final TextEditingController _textController = new TextEditingController();
   MessageController _messageController;
-  var messages = [];
+  LoginController _loginController;
+  var messages;
   bool isLoading;
 
   @override
   void initState() {
     super.initState();
     _messageController = new MessageController();
+    _loginController = new LoginController();
     isLoading = true;
     setup();
   }
 
+  void _showDialog() {
+    showDialog(
+      context: (context),
+      builder: (BuildContext context) {
+        return new AlertDialog(
+          title: new Text('Sessie verlopen'),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text('OK'),
+              onPressed: () => Navigator.of(context).pop(),
+            )
+          ],
+        );
+      }
+    );
+  }
+
   setup() async {
     messages = await _messageController.getAllMessages();
+    if(messages == 'not-authorized') {
+      _showDialog();
+      _loginController.removeLocalToken();
+      Navigator.pushAndRemoveUntil(context, 
+        MaterialPageRoute(
+          builder: (context) => LoginScreen()
+        ), 
+        ModalRoute.withName('/login')
+      );
+    }
     this.setState(() {
       messages = messages;
       isLoading = false;
